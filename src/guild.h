@@ -31,11 +31,18 @@ public:
   }
 
   void register_actor (char *actor_name, char *actor_host, int actor_port){
-    char * path_to_actor_list ;
-    path_to_actor_list += base_path + "/" + actor_name + "/" + "actor_host" + ":" + actor_port;
-    etcd_result  r =   etcd_set (sess, path_to_actor_list, "", NULL, expire_in_seconds);
-	if (!r){
-	  fprintf(stderr, "nor\n");
+    string path_to_actor_list ;
+    path_to_actor_list.append(base_path).append("/").append(actor_name).append("/").append(actor_host).append(":").append(
+    		static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str()
+    );
+
+    cout << path_to_actor_list;
+    char* c = new char[path_to_actor_list.length() + 1];
+    strcpy(c, path_to_actor_list.c_str());
+    etcd_result  r =   etcd_set (sess, c, "", NULL, expire_in_seconds);
+    delete [] c;
+	if (r != ETCD_OK){
+	  fprintf(stderr, " was not ok\n");
 	  throw 2;
 	}
   }
