@@ -26,6 +26,7 @@
 								<option id="gnu.cpp.compiler.option.other.other.451940948" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.2110821910" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/edward/Documents/java/etcd-api"/>
+									<listOptionValue builtIn="false" value="/usr/include/cppa"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.files.1122624799" name="Include files (-include)" superClass="gnu.cpp.compiler.option.include.files" valueType="includeFiles"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1707240825" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -35,7 +36,9 @@
 								<option id="gnu.c.compiler.exe.debug.option.debugging.level.1432888078" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1122999988" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/edward/Documents/java/etcd-api"/>
+									<listOptionValue builtIn="false" value="/usr/include/cppa"/>
 								</option>
+								<option id="gnu.c.compiler.option.misc.other.43837952" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.113260719" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.617968945" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
@@ -59,7 +62,9 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.1731829459" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
 								<option id="gnu.both.asm.option.flags.744093582" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="" valueType="string"/>
-								<option id="gnu.both.asm.option.include.paths.752809612" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath"/>
+								<option id="gnu.both.asm.option.include.paths.752809612" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/include/cppa"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.845433607" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>

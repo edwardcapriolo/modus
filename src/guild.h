@@ -47,7 +47,16 @@ public:
 	}
   }
 
-private:
+  vector<string> search_actors(char * actor_name ){
+    vector<string> results;
+	string path_to_actor_list;
+	path_to_actor_list.append(base_path).append("/").append(actor_name);
+
+	return results;
+  }
+
+
+protected:
   etcd_session sess;
   int expire_in_seconds;
 };

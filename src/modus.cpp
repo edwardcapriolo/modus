@@ -6,15 +6,20 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
+#include <chrono>
 #include <iostream>
-using namespace std;
+#include <algorithm>
 #include "cppa/cow_tuple.hpp"
 #include "cppa/cppa.hpp"
-
 #include "guild.h"
+#include "cppa/event_based_actor.hpp"
+#include "cppa/local_actor.hpp"
+#include "cppa/atom.hpp"
+#include "guild_reporter.h"
 
 
 using namespace cppa;
+using namespace std;
 
 int main() {
 	cout << "!!!Hello modus!!!" << endl; // prints !!!Hello modus!!!
@@ -22,11 +27,28 @@ int main() {
 	cow_tuple<int,int,int> x2 = make_cow_tuple(1, 2, 3);
 	cow_tuple<int,string,int> x3 = make_cow_tuple(1, "hi", 3);
 	//char            *servers        = getenv("ETCD_SERVERS");
-	guild g ("127.0.0.1:4001", 200);
-	g.register_actor("bob","127.0.0.1", 6000);
+
+	//g.register_actor("bob","127.0.0.1", 6000);
+	//actor x = spawn(register_actor);
+	guild g (strdup("127.0.0.1:4001"), 200);
+	guild_reporter reporter( &g , 5);
+	cout << "!!!Hello modus!!!" << endl; // prints !!!Hello modus!!!
+	await_all_actors_done();
 	return 0;
 
 }
+
+/*
+ * void register_actor(event_based_actor* self){
+  self->send(self, atom("modus-tick"));
+  self->become (
+	on(atom("modus-tick")) >> [=] () {
+	  cout << "!!!tic!!!" << endl; // prints !!!Hello modus!!!
+	  self->delayed_send(self, std::chrono::milliseconds(5000), atom("modus-tick") );
+  	 }
+  );
+}
+ */
 
 /*
 char            *servers        = "127.0.0.1:4001";
