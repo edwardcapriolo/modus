@@ -20,6 +20,7 @@
 
 using namespace cppa;
 using namespace std;
+using namespace modus;
 
 int main() {
 	cout << "!!!Hello modus!!!" << endl; // prints !!!Hello modus!!!
@@ -27,11 +28,8 @@ int main() {
 	cow_tuple<int,int,int> x2 = make_cow_tuple(1, 2, 3);
 	cow_tuple<int,string,int> x3 = make_cow_tuple(1, "hi", 3);
 	//char            *servers        = getenv("ETCD_SERVERS");
-
-	//g.register_actor("bob","127.0.0.1", 6000);
-	//actor x = spawn(register_actor);
 	guild g (strdup("127.0.0.1:4001"), 200);
-	guild_reporter reporter( &g , 5);
+	guild_reporter reporter( &g , 5, "127.0.0.1", 9999);
 	cout << "!!!Hello modus!!!" << endl; // prints !!!Hello modus!!!
 	await_all_actors_done();
 	return 0;
