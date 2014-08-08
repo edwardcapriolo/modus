@@ -43,18 +43,10 @@ void register_actor(event_based_actor* self, guild * guild, int report_seconds){
       self->delayed_send(self, 
         std::chrono::milliseconds(report_seconds * 1000L), atom("modus-tick") );
     }
-);
-
+  );
 } //end reporter
 
 } //end namespace
 
-
-
 #endif /* GUILD_REPORTER_H_ */
 
-/*
-char* c = new char[name.length() + 1];
-strcpy(c, name.c_str());
-guild_member->register_actor(c, strdup("127.0.0.01"), 7777);
-	*/
