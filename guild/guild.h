@@ -8,6 +8,7 @@
 #ifndef GUILD_H_
 #define GUILD_H_
 #include <iostream>
+#include <sstream>
 #include <etcdcpp/libetcdcpp.cxx>
 
 using namespace std;
