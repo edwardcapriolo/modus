@@ -22,43 +22,32 @@ using namespace std;
 namespace modus {
 
 //Put this here so it is free fx
-void register_actor(event_based_actor* self, guild_reporter * guild_reporter);
+void register_actor(event_based_actor* self, guild * guild, int report_seconds);
 
 class guild_reporter {
-
 public:
   guild_reporter(guild * guild_member, int report_seconds){
-    this->guild_member = guild_member;
-    x = spawn(register_actor, this&);
-  }
-
-  void register_actor_instance(actor a, string name){
-  }
-
-  int get_report_seconds(){
-    return report_seconds;
+    x = spawn(register_actor, guild_member, report_seconds);
   }
 private:
-
-  guild * guild_member;
-  int report_seconds;
   actor x;
 };
 
-void register_actor(event_based_actor* self, guild_reporter * guild_reporter){
+void register_actor(event_based_actor* self, guild * guild, int report_seconds){
   self->send(self, atom("modus-tick"));
   self->become (
     on(atom("modus-tick")) >> [=] () {
       cout << "!!!tic!!!" << endl; // prints !!!Hello modus!!!
-      //reporter send list of local actors
+      //get list of local actors
+      //guild.register
       self->delayed_send(self, 
-        std::chrono::milliseconds(guild_reporter->get_report_seconds()*1000L), atom("modus-tick") );
+        std::chrono::milliseconds(report_seconds * 1000L), atom("modus-tick") );
     }
 );
 
-}
+} //end reporter
 
-}
+} //end namespace
 
 
 
