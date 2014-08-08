@@ -1,8 +1,21 @@
 #include "guild.h"
 #include "guild_reporter.cpp"
 #include <iostream>
+#include <etcdcpp/libetcdcpp.cxx>
+#include <vector>
 
 using namespace std;
-int main () {
+using namespace etcdcpp;
+using namespace modus;
 
+int main () {
+  etcd_host h;
+  h.host = "localhost";
+  h.port = 4001;
+  vector<etcd_host> host_list;
+  host_list.push_back(h);
+  etcd_session s(host_list);
+  guild g(&s,20);
+  guild_reporter rep(&g,5);  
+  await_all_actors_done();
 }
