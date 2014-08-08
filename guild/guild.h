@@ -9,7 +9,7 @@
 #define GUILD_H_
 #include <iostream>
 #include <sstream>
-#include <etcdcpp/libetcdcpp.cxx>
+#include <etcdcpp/libetcdcpp.cpp>
 
 using namespace std;
 using namespace etcdcpp;
@@ -18,6 +18,10 @@ namespace modus {
 
 class actor_info {
 public:
+  actor_info(string host, short port){
+    this -> host = host;
+    this -> port = port;
+  }
   string host;
   unsigned short port;
 };

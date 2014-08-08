@@ -1,5 +1,5 @@
 # Make sure the compiler can find include files from our Hello library.
-include_directories (${PROJECT_SOURCE_DIR}/../etcd-plus-plus)
+include_directories (${PROJECT_SOURCE_DIR}/../etcdcpp)
 include_directories (${PROJECT_SOURCE_DIR}/guild)
 
 # Make sure the linker can find the Hello library once it is built.
