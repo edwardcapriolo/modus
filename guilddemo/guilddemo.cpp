@@ -14,6 +14,8 @@ int main () {
   host_list.push_back(h);
   etcd_session s(host_list);
   guild g(&s,20);
-  guild_reporter rep(&g,5);  
-  await_all_actors_done();
+  guild_reporter rep(&g,5); 
+  sleep(15);
+  //await_all_actors_done();
+
 }

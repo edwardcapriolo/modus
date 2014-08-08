@@ -48,10 +48,27 @@ public:
     delete result;
   }
 
+  /*
+  {"action":"get","node":
+  {"key":"/message/b","dir":true,"nodes":
+    [
+      {"key":"/message/b/24","value":"dah","modifiedIndex":24,"createdIndex":24},
+      {"key":"/message/b/27","value":"dah","modifiedIndex":27,"createdIndex":27},
+      {"key":"/message/b/30","value":"dah","modifiedIndex":30,"createdIndex":30},
+      {"key":"/message/b/34","value":"dah","modifiedIndex":34,"createdIndex":34},
+      {"key":"/message/b/38","value":"dah","modifiedIndex":38,"createdIndex":38},
+      {"key":"/message/b/42","value":"dah","modifiedIndex":42,"createdIndex":42},
+      {"key":"/message/b/47","value":"dah","modifiedIndex":47,"createdIndex":47},
+      {"key":"/message/b/51","value":"dah","modifiedIndex":51,"createdIndex":51}
+    ],"modifiedIndex":24,"createdIndex":24}}
+  */
   vector<actor_info> search_actors(string actor_name){
     string path_to_actor_list = base_path + "/" + actor_name;
     Document * results = session->get(path_to_actor_list);
     //parse results
+    Value& node = (*results)["node"];
+    Value& key = node["key"];	
+    cout << key.GetString();
     delete results;
     vector <actor_info> res;
     return res;

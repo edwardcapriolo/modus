@@ -40,6 +40,8 @@ void register_actor(event_based_actor* self, guild * guild, int report_seconds){
       cout << "!!!tic!!!" << endl; // prints !!!Hello modus!!!
       //get list of local actors
       //guild.register
+      //TODO DEBUG REMOVE
+      guild->register_actor("myactor", "localhost", 8808);
       self->delayed_send(self, 
         std::chrono::milliseconds(report_seconds * 1000L), atom("modus-tick") );
     }
