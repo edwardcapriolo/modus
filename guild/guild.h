@@ -72,7 +72,6 @@ public:
       Value& node = (*results)["node"];
       if (node.HasMember("nodes")){
         Value& nodes = node["nodes"];	
-        cout << nodes.Size();
         assert(nodes.IsArray());
         for (SizeType i = 0; i < nodes.Size(); i++){
           Value& row = nodes[i];
@@ -80,17 +79,12 @@ public:
           Value& value = row["value"];
           values.insert(value.GetString());
         }
-      //cout << lastNode;
-      //cout << lastNode["value"].GetString();
       }
     }
     for ( auto it = values.begin(); it != values.end(); ++it ){
-      //std::cout << " " << *it;
       size_t index = (*it).find(":");
       string host = (*it).substr(0,index);
       int port = atoi((*it).substr(index+1).c_str()) ;
-      //cout << host << endl;
-      //cout << port << endl;
       actor_info a(host,port);
       res.push_back(a);
     }
