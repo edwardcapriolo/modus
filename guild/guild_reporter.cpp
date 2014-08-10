@@ -37,12 +37,12 @@ void register_actor(event_based_actor* self, guild * guild, int report_seconds){
   self->send(self, atom("modus-tick"));
   self->become (
     on(atom("modus-tick")) >> [=] () {
-      cout << "!!!tic!!!" << endl; // prints !!!Hello modus!!!
+      //cout << "!!!tic!!!" << endl; // prints !!!Hello modus!!!
       //get list of local actors
       //guild.register
       //TODO DEBUG REMOVE
-      guild->register_actor("myactor", "localhost", 8808);
-      guild->register_actor("myactor", "mocalhost", 8809);
+      //guild->register_actor("myactor", "localhost", 8808);
+      //guild->register_actor("myactor", "mocalhost", 8809);
       self->delayed_send(self, 
         std::chrono::milliseconds(report_seconds * 1000L), atom("modus-tick") );
     }
