@@ -10,6 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <etcdcpp/libetcdcpp.cpp>
+#include <set>
 
 using namespace std;
 using namespace etcdcpp;
@@ -41,36 +42,59 @@ public:
   }
 
   void register_actor (string actor_name, string actor_host, int actor_port){
-    string path_to_actor_list = base_path + "/" + actor_name + "/" + actor_host + ":" +
-    (static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str());
-    Document * result = session->set(path_to_actor_list, "", expire_in_seconds);
+    //string path_to_actor_list = base_path + "/" + actor_name + "/" + actor_host + ":" +
+    //(static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str());
+    string path_to_actor_list = base_path + "/" + actor_name ;
+    Document * result = session->set(path_to_actor_list, actor_host + ":" +
+	(static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str())
+	, expire_in_seconds);
     //detect error
     delete result;
   }
 
   /*
   {"action":"get","node":
-  {"key":"/message/b","dir":true,"nodes":
-    [
-      {"key":"/message/b/24","value":"dah","modifiedIndex":24,"createdIndex":24},
-      {"key":"/message/b/27","value":"dah","modifiedIndex":27,"createdIndex":27},
-      {"key":"/message/b/30","value":"dah","modifiedIndex":30,"createdIndex":30},
-      {"key":"/message/b/34","value":"dah","modifiedIndex":34,"createdIndex":34},
-      {"key":"/message/b/38","value":"dah","modifiedIndex":38,"createdIndex":38},
-      {"key":"/message/b/42","value":"dah","modifiedIndex":42,"createdIndex":42},
-      {"key":"/message/b/47","value":"dah","modifiedIndex":47,"createdIndex":47},
-      {"key":"/message/b/51","value":"dah","modifiedIndex":51,"createdIndex":51}
-    ],"modifiedIndex":24,"createdIndex":24}}
+   {"key":"/actors/myactor","dir":true,"nodes":
+     [{"key":"/actors/myactor/3","value":"localhost:8808","expiration":"2014-08-09T17:55:26.211706122-04:00","ttl":52,"modifiedIndex":3,"createdIndex":3},
+      {"key":"/actors/myactor/4","value":"mocalhost:8809","expiration":"2014-08-09T17:55:26.214349689-04:00","ttl":52,"modifiedIndex":4,"createdIndex":4},
+      {"key":"/actors/myactor/5","value":"localhost:8808","expiration":"2014-08-09T17:55:31.222940547-04:00","ttl":57,"modifiedIndex":5,"createdIndex":5},
+      {"key":"/actors/myactor/6","value":"mocalhost:8809","expiration":"2014-08-09T17:55:31.224809533-04:00","ttl":57,"modifiedIndex":6,"createdIndex":6}
+     ],"modifiedIndex":3,"createdIndex":3
+   }
+}
   */
   vector<actor_info> search_actors(string actor_name){
     string path_to_actor_list = base_path + "/" + actor_name;
     Document * results = session->get(path_to_actor_list);
-    //parse results
-    Value& node = (*results)["node"];
-    Value& key = node["key"];	
-    cout << key.GetString();
-    delete results;
+    set<string> values;
     vector <actor_info> res;
+    if ( (!results->HasMember("errorCode")) && results->HasMember("action") ){
+      Value& node = (*results)["node"];
+      if (node.HasMember("nodes")){
+        Value& nodes = node["nodes"];	
+        cout << nodes.Size();
+        assert(nodes.IsArray());
+        for (SizeType i = 0; i < nodes.Size(); i++){
+          Value& row = nodes[i];
+          Value& ikey = row["key"];
+          Value& value = row["value"];
+          values.insert(value.GetString());
+        }
+      //cout << lastNode;
+      //cout << lastNode["value"].GetString();
+      }
+    }
+    for ( auto it = values.begin(); it != values.end(); ++it ){
+      //std::cout << " " << *it;
+      size_t index = (*it).find(":");
+      string host = (*it).substr(0,index);
+      int port = atoi((*it).substr(index+1).c_str()) ;
+      //cout << host << endl;
+      //cout << port << endl;
+      actor_info a(host,port);
+      res.push_back(a);
+    }
+    delete results;
     return res;
   }
 

@@ -16,6 +16,8 @@ int main () {
   guild g(&s,20);
   guild_reporter rep(&g,5); 
   sleep(15);
+  vector<actor_info> a = g.search_actors("myactor");
+  cout << "found actors" << a.size() << endl;
   //await_all_actors_done();
 
 }
