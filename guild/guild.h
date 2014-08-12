@@ -45,11 +45,10 @@ public:
     //string path_to_actor_list = base_path + "/" + actor_name + "/" + actor_host + ":" +
     //(static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str());
     string path_to_actor_list = base_path + "/" + actor_name ;
-    Document * result = session->set(path_to_actor_list, actor_host + ":" +
+    std::unique_ptr<Document> result = session->set(path_to_actor_list, actor_host + ":" +
 	(static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str())
 	, expire_in_seconds);
     //detect error
-    delete result;
   }
 
   /*
@@ -65,7 +64,7 @@ public:
   */
   vector<actor_info> search_actors(string actor_name){
     string path_to_actor_list = base_path + "/" + actor_name;
-    Document * results = session->get(path_to_actor_list);
+    std::unique_ptr<Document> results = session->get(path_to_actor_list);
     set<string> values;
     vector <actor_info> res;
     if ( (!results->HasMember("errorCode")) && results->HasMember("action") ){
@@ -88,7 +87,6 @@ public:
       actor_info a(host,port);
       res.push_back(a);
     }
-    delete results;
     return res;
   }
 
