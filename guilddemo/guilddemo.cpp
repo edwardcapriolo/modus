@@ -4,6 +4,9 @@
 #include <etcdcpp/libetcdcpp.cpp>
 #include <vector>
 
+#include <chrono>
+#include <thread>
+#include "caf/io/hook.hpp"
 using namespace std;
 using namespace etcdcpp;
 using namespace modus;
@@ -18,9 +21,9 @@ int main () {
   g.register_actor("myactor", "localhost", 8808);
   g.register_actor("myactor", "mocalhost", 8809);
 
-  sleep(15);
+  std::this_thread::sleep_for(std::chrono::milliseconds(15000));
   vector<actor_info> a = g.search_actors("myactor");
   cout << "found actors" << a.size() << endl;
   //await_all_actors_done();
-
+  
 }

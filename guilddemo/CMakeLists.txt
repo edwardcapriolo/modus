@@ -10,4 +10,4 @@ link_directories (${PROJECT_SOURCE_DIR}/guild )
 add_executable (guilddemo guilddemo.cpp)
 
 # Link the executable to the Hello library.
-target_link_libraries (guilddemo guild cppa curl) 
+target_link_libraries (guilddemo guild curl caf_core caf_io) 

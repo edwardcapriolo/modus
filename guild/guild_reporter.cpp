@@ -10,13 +10,11 @@
 #include <chrono>
 #include <vector>
 #include <string>
-#include "cppa/cppa.hpp"
 #include "guild.h"
-#include "cppa/actor.hpp"
-#include "cppa/spawn.hpp"
 #include <iostream>
+#include "caf/all.hpp"
 
-using namespace cppa;
+using namespace caf;
 using namespace std;
 
 namespace modus {
