@@ -26,9 +26,14 @@ class guild_reporter {
 public:
   guild_reporter(guild * guild_member, int report_seconds){
     x = spawn(register_actor, guild_member, report_seconds);
+    myguild = guild_member;
+  }
+  guild * get_guild(){
+    return myguild;
   }
 private:
   actor x;
+  guild * myguild;
 };
 
 void register_actor(event_based_actor* self, guild * guild, int report_seconds){
