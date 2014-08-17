@@ -16,6 +16,7 @@ using namespace modus;
 void calculator(event_based_actor* self) {
   self->become (
     on(atom("plus"), arg_match) >> [](int a, int b) -> message {
+      cout << "message";
       return make_message(atom("result"), a + b);
     },
     on(atom("minus"), arg_match) >> [](int a, int b) -> message {
@@ -100,8 +101,11 @@ int main (){
   g.register_actor("calculator", "localhost", server_port);
 
   auto client = spawn(client_bhvr, &rep, invalid_actor);
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   
   //where does this go?
+  anon_send(client, atom("plus"), 1, 2);
   anon_send(client, atom("plus"), 1, 2);
 
   await_all_actors_done();
