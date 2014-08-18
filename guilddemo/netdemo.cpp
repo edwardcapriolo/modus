@@ -16,7 +16,7 @@ using namespace modus;
 void calculator(event_based_actor* self) {
   self->become (
     on(atom("plus"), arg_match) >> [](int a, int b) -> message {
-      cout << "message";
+      cout << "message" << endl;
       return make_message(atom("result"), a + b);
     },
     on(atom("minus"), arg_match) >> [](int a, int b) -> message {
@@ -57,15 +57,20 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
   }
 
   auto pred = [=](atom_value val) -> optional<atom_value> {
+      
     if (server != invalid_actor
         && (val == atom("plus") || val == atom("minus"))) {
       return val;
     }
     return none;
   };
+  
+  self->send(server, atom("plus"), 1, 2 );
+  self->send(server, atom("plus"), 1, 2 );
 
-  self->become (
+  self->become (  
     on(pred, arg_match) >> [=](atom_value op, int lhs, int rhs) {
+        cout << "on" << endl;
       self->sync_send_tuple(server, self->last_dequeued()).then(
         on(atom("result"), arg_match) >> [=](int result) {
           aout(self) << lhs << " "
@@ -86,25 +91,25 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
 int main (){
 
   //Create a registry service
-  etcd_host h("localhost", 4001);
-  vector<etcd_host> host_list;
-  host_list.push_back(h);
-  etcd_session s(host_list);
+  //etcd_host h("localhost", 4001);
+  //vector<etcd_host> host_list;
+  //host_list.push_back(h);
+  etcd_session s(etcd_host("localhost", 4001));
   guild g(&s, 20);
   guild_reporter rep(&g, 5);
 
   // create actor  
   int server_port = 9995;
-  io::publish(spawn(calculator), server_port);
+  
+  auto netcalc = spawn(calculator);
+  io::publish(netcalc, server_port);
 
   //publish actor to guild manually until we auto-detect
   g.register_actor("calculator", "localhost", server_port);
 
   auto client = spawn(client_bhvr, &rep, invalid_actor);
-
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   
-  //where does this go?
   anon_send(client, atom("plus"), 1, 2);
   anon_send(client, atom("plus"), 1, 2);
 
