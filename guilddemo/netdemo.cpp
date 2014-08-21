@@ -65,12 +65,11 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
     return none;
   };
   
-  self->send(server, atom("plus"), 1, 2 );
-  self->send(server, atom("plus"), 1, 2 );
+  //self->send(server, atom("plus"), 1, 2 );
+  //self->send(server, atom("plus"), 1, 2 );
 
   self->become (  
-    on(pred, arg_match) >> [=](atom_value op, int lhs, int rhs) {
-        cout << "on" << endl;
+    on(pred, val<int>,val<int>) >> [=](atom_value op, int lhs, int rhs) {
       self->sync_send_tuple(server, self->last_dequeued()).then(
         on(atom("result"), arg_match) >> [=](int result) {
           aout(self) << lhs << " "
@@ -83,6 +82,9 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
     [=](const down_msg&) {
       aout(self) << "*** server down, try to reconnect ..." << endl;
       client_bhvr(self, rep, invalid_actor);
+    },
+    others() >> [=] {
+        aout(self) << "Do not know what to do";
     }
   );
 
@@ -90,10 +92,6 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
 
 int main (){
 
-  //Create a registry service
-  //etcd_host h("localhost", 4001);
-  //vector<etcd_host> host_list;
-  //host_list.push_back(h);
   etcd_session s(etcd_host("localhost", 4001));
   guild g(&s, 20);
   guild_reporter rep(&g, 5);
@@ -108,10 +106,10 @@ int main (){
   g.register_actor("calculator", "localhost", server_port);
 
   auto client = spawn(client_bhvr, &rep, invalid_actor);
+  
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  anon_send(client, atom("plus"), 1, 2);
+  anon_send(client, atom("plus"), 1, 2);
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   
-  anon_send(client, atom("plus"), 1, 2);
-  anon_send(client, atom("plus"), 1, 2);
-
-  await_all_actors_done();
 }
