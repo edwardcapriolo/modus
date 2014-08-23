@@ -17,7 +17,7 @@ int main () {
   host_list.push_back(h);
   etcd_session s(host_list);
   guild g(&s,20);
-  guild_reporter rep(&g,5); 
+  //guild_reporter rep(&g,5); 
   g.register_actor("myactor", "localhost", 8808);
   g.register_actor("myactor", "mocalhost", 8809);
 

@@ -91,19 +91,15 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
 }
 
 int main (){
-
   etcd_session s(etcd_host("localhost", 4001));
   guild g(&s, 20);
-  guild_reporter rep(&g, 5);
-
-  // create actor  
-  int server_port = 9995;
   
+  int server_port = 9995;  
   auto netcalc = spawn(calculator);
   io::publish(netcalc, server_port);
-
-  //publish actor to guild manually until we auto-detect
-  g.register_actor("calculator", "localhost", server_port);
+  
+  guild_reporter rep(&g, 5, "calculator", "localhost", server_port);
+  rep.link_to(netcalc);
 
   auto client = spawn(client_bhvr, &rep, invalid_actor);
   

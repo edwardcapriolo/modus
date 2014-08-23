@@ -19,33 +19,33 @@ using namespace std;
 
 namespace modus {
 
-//Put this here so it is free fx
-void register_actor(event_based_actor* self, guild * guild, int report_seconds);
+void register_actor(event_based_actor* self, guild * guild, int report_seconds, 
+                    string actor_name, string addr, int port);
 
 class guild_reporter {
 public:
-  guild_reporter(guild * guild_member, int report_seconds){
-    x = spawn(register_actor, guild_member, report_seconds);
+  guild_reporter(guild * guild_member, int report_seconds, string actor_name,
+                 string addr, int port){
+    x = spawn(register_actor, guild_member, report_seconds, actor_name, addr, port);
     myguild = guild_member;
   }
   guild * get_guild(){
     return myguild;
+  }
+  void link_to(actor a){
+    a->link_to(x);
   }
 private:
   actor x;
   guild * myguild;
 };
 
-void register_actor(event_based_actor* self, guild * guild, int report_seconds){
+void register_actor(event_based_actor* self, guild * guild, int report_seconds,
+                    string actor_name, string addr, int port){
   self->send(self, atom("modus-tick"));
   self->become (
     on(atom("modus-tick")) >> [=] () {
-      //cout << "!!!tic!!!" << endl; // prints !!!Hello modus!!!
-      //get list of local actors
-      //guild.register
-      //TODO DEBUG REMOVE
-      //guild->register_actor("myactor", "localhost", 8808);
-      //guild->register_actor("myactor", "mocalhost", 8809);
+      guild->register_actor(actor_name, addr, port);
       self->delayed_send(self, 
         std::chrono::milliseconds(report_seconds * 1000L), atom("modus-tick") );
     }
