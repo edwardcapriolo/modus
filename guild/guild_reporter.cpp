@@ -26,6 +26,9 @@ class guild_reporter {
 public:
   guild_reporter(guild * guild_member, int report_seconds, string actor_name,
                  string addr, int port){
+    if (report_seconds > guild_member->get_expire_in_seconds()) {
+      throw "report_seconds must be greater than expire_seconds ";
+    }  
     x = spawn(register_actor, guild_member, report_seconds, actor_name, addr, port);
     myguild = guild_member;
   }

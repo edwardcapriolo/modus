@@ -35,6 +35,7 @@ class guild {
 
 public:
   const string base_path = "/actors";
+  const string actor_client_base = "/actor_client";
 
   guild(etcd_session * session, int expire_in_seconds) {
     this->expire_in_seconds = expire_in_seconds;
@@ -51,6 +52,15 @@ public:
     //detect error
   }
 
+  /*
+   Register a ttl record to signify a client is connected 
+   */
+  void client_connect(string actor_name, string actor_host, int actor_port, string client_id){
+    string path_to_actor_list = actor_client_base + "/" + actor_name;
+     std::unique_ptr<Document> result = session->set(path_to_actor_list, actor_host + ":" +
+	(static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str() + "@" + client_id)
+	, expire_in_seconds);
+  }
   /*
   {"action":"get","node":
    {"key":"/actors/myactor","dir":true,"nodes":
@@ -90,6 +100,10 @@ public:
     return res;
   }
 
+  int get_expire_in_seconds(){
+    return expire_in_seconds;   
+  }
+  
 protected:
   etcd_session * session;
   int expire_in_seconds;

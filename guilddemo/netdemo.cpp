@@ -1,5 +1,6 @@
 #include "guild.h"
 #include "guild_reporter.cpp"
+#include "client_reporter.cpp"
 #include <iostream>
 #include <etcdcpp/libetcdcpp.cpp>
 #include <vector>
@@ -28,26 +29,30 @@ void calculator(event_based_actor* self) {
   );
 }
 
-void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& server) {
+void client_bhvr(event_based_actor* self, guild *guild, const actor& server) {
    if (!self->has_sync_failure_handler()) {
     self->on_sync_failure([=] {
       aout(self) << "*** sync_failur connection. Attempt reconnect " << endl;
-      client_bhvr(self, rep, invalid_actor);
+      client_bhvr(self, guild, invalid_actor);
     });
   }
 
   if (!server) {
     aout(self) << "*** try to re-connect " << endl;
     try {
-      vector<actor_info> a = rep->get_guild()->search_actors("calculator");
+      vector<actor_info> a = guild->search_actors("calculator");
       //pick a random one, try them all?
       if (a.size() == 0) {
         throw "No actors found";
       }
-      auto new_serv = io::remote_actor(a[0].host,a[0].port);
+      auto new_serv = io::remote_actor(a[0].host, a[0].port);
       self->monitor(new_serv);
+      
+      string my_id = "42";
+      client_reporter cli(guild, 5, "calculator", a[0].host, a[0].port, my_id );
+      cli.link_to(new_serv);
       aout(self) << "reconnection succeeded" << endl;
-      client_bhvr(self, rep, new_serv);
+      client_bhvr(self, guild, new_serv);
       return;
     }
     catch (exception&) {
@@ -57,7 +62,6 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
   }
 
   auto pred = [=](atom_value val) -> optional<atom_value> {
-      
     if (server != invalid_actor
         && (val == atom("plus") || val == atom("minus"))) {
       return val;
@@ -65,9 +69,6 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
     return none;
   };
   
-  //self->send(server, atom("plus"), 1, 2 );
-  //self->send(server, atom("plus"), 1, 2 );
-
   self->become (  
     on(pred, val<int>,val<int>) >> [=](atom_value op, int lhs, int rhs) {
       self->sync_send_tuple(server, self->last_dequeued()).then(
@@ -81,7 +82,7 @@ void client_bhvr(event_based_actor* self, guild_reporter *rep, const actor& serv
     },
     [=](const down_msg&) {
       aout(self) << "*** server down, try to reconnect ..." << endl;
-      client_bhvr(self, rep, invalid_actor);
+      client_bhvr(self, guild, invalid_actor);
     },
     others() >> [=] {
         aout(self) << "Do not know what to do";
@@ -98,10 +99,11 @@ int main (){
   auto netcalc = spawn(calculator);
   io::publish(netcalc, server_port);
   
+  //Create a reporter that will register the server host/port with etcd
   guild_reporter rep(&g, 5, "calculator", "localhost", server_port);
   rep.link_to(netcalc);
 
-  auto client = spawn(client_bhvr, &rep, invalid_actor);
+  auto client = spawn(client_bhvr, &g, invalid_actor);
   
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   anon_send(client, atom("plus"), 1, 2);
