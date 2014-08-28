@@ -3,7 +3,7 @@ Modus
 
 An actor registry and discovery service for libcaf https://github.com/actor-framework/actor-framework
 
-Modus runs a threaded actor as a service that (will soon) automatically register TTL records in https://github.com/coreos/etcd . For now users can manually register actors in the guild and ask the guild which actors are running where.
+Modus is a library that helps network actors communicate host port information so other actors can discover them.
 
 Building
 ======
