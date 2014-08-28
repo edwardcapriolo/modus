@@ -7,7 +7,7 @@ Modus is a library that helps network actors communicate host port information s
 
 Building
 ======
-You will need https://github.com/edwardcapriolo/etcdcpp as modus uses this. curl and simplejson are other dependencies.
+You will need https://github.com/edwardcapriolo/etcdcpp checked out at the same folder level as modus. curl and simplejson are other dependencies.
 
 Guild reporter
 ======
