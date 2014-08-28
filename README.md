@@ -44,7 +44,7 @@ An actor that records information about which clients are connected to what acto
     client_reporter cli(guild, 5, "calculator", a[0].host, a[0].port, my_id );
     cli.link_to(new_serv);
 
-See netdemo.cpp for the full source code.
+See https://github.com/edwardcapriolo/modus/blob/master/guilddemo/netdemo.cpp for the full source code.
 
 Storage in etcd
 ======
