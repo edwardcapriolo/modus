@@ -5,6 +5,10 @@ An actor registry and discovery service for libcaf https://github.com/actor-fram
 
 Modus runs a threaded actor as a service that (will soon) automatically register TTL records in https://github.com/coreos/etcd . For now users can manually register actors in the guild and ask the guild which actors are running where.
 
+Building
+======
+You will need https://github.com/edwardcapriolo/etcdcpp as modus uses this. curl and simplejson are other dependencies.
+
 Guild reporter
 ======
 
