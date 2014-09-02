@@ -8,6 +8,7 @@ using namespace caf;
 using namespace modus;
 
 int main (){
+    /*
   obj o;
   //cout << o.data.find("stuff")->second << endl;
   announce<insert_request>(&insert_request::t, &insert_request::f);
@@ -19,12 +20,14 @@ int main (){
   r.t = o;
   r.f = f;
   self->send(et, r);
-  
+  */
+      
   file_feed_def<int> f1 (file_feed_def<int>(string("/tmp/a")));
   modus_context m ;
   uds_def<int> d = m.load(f1);
   Fx<double,int> convert;
   uds_def<double> n = d.map( convert);
-  
+  RFx<double,double, double> change;
+  uds_def<double,double> o = n.reduce(change);
   
 }
