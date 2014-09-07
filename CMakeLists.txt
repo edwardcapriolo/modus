@@ -4,4 +4,5 @@ project (modus)
 
 add_subdirectory (guild)
 add_subdirectory (guilddemo)
-add_subdirectory (uds)
+#add_subdirectory (uds)
+#add_subdirectory (udsdemo)
