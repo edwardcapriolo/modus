@@ -5,13 +5,7 @@
  *      Author: edward
  */
 
-#ifndef GUILD_REPORTER_H_
-#define GUILD_REPORTER_H_
-#include <chrono>
-#include <vector>
-#include <string>
-#include "guild.h"
-#include <iostream>
+#include "guild_reporter.h"
 #include "caf/all.hpp"
 
 using namespace caf;
@@ -19,29 +13,17 @@ using namespace std;
 
 namespace modus {
 
-void register_actor(event_based_actor* self, guild * guild, int report_seconds, 
-                    string actor_name, string addr, int port);
+guild_reporter::guild_reporter(guild * guild_member, int report_seconds, string actor_name, string addr, int port){
+  if (report_seconds > guild_member->get_expire_in_seconds()) {
+    throw "report_seconds must be greater than expire_seconds ";
+  }  
+  x = spawn(register_actor, guild_member, report_seconds, actor_name, addr, port);
+  myguild = guild_member;
+}
 
-class guild_reporter {
-public:
-  guild_reporter(guild * guild_member, int report_seconds, string actor_name,
-                 string addr, int port){
-    if (report_seconds > guild_member->get_expire_in_seconds()) {
-      throw "report_seconds must be greater than expire_seconds ";
-    }  
-    x = spawn(register_actor, guild_member, report_seconds, actor_name, addr, port);
-    myguild = guild_member;
-  }
-  guild * get_guild(){
-    return myguild;
-  }
-  void link_to(actor a){
-    a->link_to(x);
-  }
-private:
-  actor x;
-  guild * myguild;
-};
+void guild_reporter::link_to(actor a) {
+  a->link_to(x);
+}
 
 void register_actor(event_based_actor* self, guild * guild, int report_seconds,
                     string actor_name, string addr, int port){
@@ -56,6 +38,4 @@ void register_actor(event_based_actor* self, guild * guild, int report_seconds,
 } //end reporter
 
 } //end namespace
-
-#endif /* GUILD_REPORTER_H_ */
 

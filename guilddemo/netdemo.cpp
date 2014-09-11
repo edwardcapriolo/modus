@@ -2,11 +2,10 @@
 #include "guild_reporter.cpp"
 #include "client_reporter.cpp"
 #include <iostream>
-#include <etcdcpp/libetcdcpp.cpp>
+#include <etcdcpp.h>
 #include <vector>
 #include <chrono>
 #include <thread>
-
 #include "caf/all.hpp"
 #include "caf/io/all.hpp"
 
@@ -45,11 +44,11 @@ void client_bhvr(event_based_actor* self, guild *guild, const actor& server) {
       if (a.size() == 0) {
         throw "No actors found";
       }
-      auto new_serv = io::remote_actor(a[0].host, a[0].port);
+      auto new_serv = io::remote_actor(a[0].get_host(), a[0].get_port());
       self->monitor(new_serv);
       
       string my_id = "42";
-      client_reporter cli(guild, 5, "calculator", a[0].host, a[0].port, my_id );
+      client_reporter cli(guild, 5, "calculator", a[0].get_host(), a[0].get_port(), my_id );
       cli.link_to(new_serv);
       aout(self) << "reconnection succeeded" << endl;
       client_bhvr(self, guild, new_serv);
@@ -92,22 +91,26 @@ void client_bhvr(event_based_actor* self, guild *guild, const actor& server) {
 }
 
 int main (){
-  etcd_session s(etcd_host("localhost", 4001));
-  guild g(&s, 20);
-  
-  int server_port = 9995;  
-  auto netcalc = spawn(calculator);
-  io::publish(netcalc, server_port);
-  
-  //Create a reporter that will register the server host/port with etcd
-  guild_reporter rep(&g, 5, "calculator", "localhost", server_port);
-  rep.link_to(netcalc);
+  try {
+    etcd_session s(etcd_host("localhost", 4001));
+    guild g(&s, 20);
+    
+    int server_port = 9995;  
+    auto netcalc = spawn(calculator);
+    io::publish(netcalc, server_port);
+    
+    //Create a reporter that will register the server host/port with etcd
+    guild_reporter rep(&g, 5, "calculator", "localhost", server_port);
+    rep.link_to(netcalc);
 
-  auto client = spawn(client_bhvr, &g, invalid_actor);
-  
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  anon_send(client, atom("plus"), 1, 2);
-  anon_send(client, atom("plus"), 1, 2);
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    auto client = spawn(client_bhvr, &g, invalid_actor);
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    anon_send(client, atom("plus"), 1, 2);
+    anon_send(client, atom("plus"), 1, 2);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  } catch (const char *message) {
+    cerr << message << endl;
+  }
   
 }

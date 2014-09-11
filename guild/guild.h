@@ -7,10 +7,8 @@
 
 #ifndef GUILD_H_
 #define GUILD_H_
-#include <iostream>
-#include <sstream>
-#include <etcdcpp/libetcdcpp.cpp>
-#include <set>
+
+#include <etcdcpp/libetcdcpp.h>
 
 using namespace std;
 using namespace etcdcpp;
@@ -18,13 +16,16 @@ using namespace etcdcpp;
 namespace modus {
 
 class actor_info {
-public:
-  actor_info(string host, short port){
-    this -> host = host;
-    this -> port = port;
-  }
-  string host;
-  unsigned short port;
+  public:
+    actor_info(string host, short port): host(host), port(port) {}
+
+    string get_host() { return host; }    
+
+    unsigned short get_port() { return port; }
+
+  private:
+    string host;
+    unsigned short port;
 };
 
 
@@ -34,33 +35,18 @@ public:
 class guild {
 
 public:
-  const string base_path = "/actors";
-  const string actor_client_base = "/actor_client";
+  static const string base_path;
+  static const string actor_client_base;
 
-  guild(etcd_session * session, int expire_in_seconds) {
-    this->expire_in_seconds = expire_in_seconds;
-    this->session = session;
-  }
+  guild(etcd_session * session, int expire_in_seconds): expire_in_seconds(expire_in_seconds), session(session) {}
 
-  void register_actor (string actor_name, string actor_host, int actor_port){
-    //string path_to_actor_list = base_path + "/" + actor_name + "/" + actor_host + ":" +
-    //(static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str());
-    string path_to_actor_list = base_path + "/" + actor_name ;
-    std::unique_ptr<Document> result = session->set(path_to_actor_list, actor_host + ":" +
-	(static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str())
-	, expire_in_seconds);
-    //detect error
-  }
+  void register_actor (string actor_name, string actor_host, int actor_port);
 
   /*
    Register a ttl record to signify a client is connected 
    */
-  void client_connect(string actor_name, string actor_host, int actor_port, string client_id){
-    string path_to_actor_list = actor_client_base + "/" + actor_name;
-     std::unique_ptr<Document> result = session->set(path_to_actor_list, actor_host + ":" +
-	(static_cast<ostringstream*>( &(ostringstream() << actor_port) )->str() + "@" + client_id)
-	, expire_in_seconds);
-  }
+  void client_connect(string actor_name, string actor_host, int actor_port, string client_id);
+
   /*
   {"action":"get","node":
    {"key":"/actors/myactor","dir":true,"nodes":
@@ -72,37 +58,9 @@ public:
    }
 }
   */
-  vector<actor_info> search_actors(string actor_name){
-    string path_to_actor_list = base_path + "/" + actor_name;
-    std::unique_ptr<Document> results = session->get(path_to_actor_list);
-    set<string> values;
-    vector <actor_info> res;
-    if ( (!results->HasMember("errorCode")) && results->HasMember("action") ){
-      Value& node = (*results)["node"];
-      if (node.HasMember("nodes")){
-        Value& nodes = node["nodes"];	
-        assert(nodes.IsArray());
-        for (SizeType i = 0; i < nodes.Size(); i++){
-          Value& row = nodes[i];
-          Value& ikey = row["key"];
-          Value& value = row["value"];
-          values.insert(value.GetString());
-        }
-      }
-    }
-    for ( auto it = values.begin(); it != values.end(); ++it ){
-      size_t index = (*it).find(":");
-      string host = (*it).substr(0,index);
-      int port = atoi((*it).substr(index+1).c_str()) ;
-      actor_info a(host,port);
-      res.push_back(a);
-    }
-    return res;
-  }
+  vector<actor_info> search_actors(string actor_name);
 
-  int get_expire_in_seconds(){
-    return expire_in_seconds;   
-  }
+  int get_expire_in_seconds(){ return expire_in_seconds; }  
   
 protected:
   etcd_session * session;
@@ -111,3 +69,4 @@ protected:
 
 } //end modus namespace
 #endif /* GUILD_H_ */
+

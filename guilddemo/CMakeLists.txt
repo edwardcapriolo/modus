@@ -9,9 +9,8 @@ link_directories (${PROJECT_SOURCE_DIR}/guild )
 # "demo.cxx" and "demo_b.cxx". The extensions are automatically found.
 add_executable (guilddemo guilddemo.cpp)
 add_executable (networkdemo netdemo.cpp)
-add_executable (helloagain helloagain.cpp)
 
 # Link the executable to the Hello library.
 target_link_libraries (guilddemo guild curl caf_core caf_io) 
 target_link_libraries (networkdemo guild curl caf_core caf_io)
-target_link_libraries (helloagain guild curl caf_core caf_io)
+
