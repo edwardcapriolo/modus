@@ -5,8 +5,7 @@
  *      Author: edward
  */
 
-#ifndef CLIENT_REPORTER_H_
-#define CLIENT_REPORTER_H_
+#include "client_reporter.h"
 #include <chrono>
 #include <vector>
 #include <string>
@@ -22,23 +21,15 @@ namespace modus {
 void register_client(event_based_actor* self, guild * guild, int report_seconds, 
                     string actor_name, string addr, short unsigned int port, string client_id);
 
-class client_reporter {
-public:
-  client_reporter(guild * guild_member, int report_seconds, string actor_name,
-                 string addr, int port, string client_id){
-    x = spawn(register_client, guild_member, report_seconds, actor_name, addr, port, client_id);
-    myguild = guild_member;
-  }
-  guild * get_guild(){
-    return myguild;
-  }
-  void link_to(actor a){
-    a->link_to(x);
-  }
-private:
-  actor x;
-  guild * myguild;
-};
+client_reporter::client_reporter(guild * guild_member, int report_seconds, string actor_name,
+                                 string addr, int port, string client_id){
+  x = spawn(register_client, guild_member, report_seconds, actor_name, addr, port, client_id);
+  myguild = guild_member;
+}
+
+void client_reporter::link_to(actor a){
+  a->link_to(x);
+}
 
 void register_client(event_based_actor* self, guild * guild, int report_seconds,
                     string actor_name, string addr, short unsigned int port, string client_id){
@@ -50,9 +41,7 @@ void register_client(event_based_actor* self, guild * guild, int report_seconds,
         std::chrono::milliseconds(report_seconds * 1000L), atom("modus-tick") );
     }
   );
-} //end reporter
+} 
 
 } //end namespace
-
-#endif /* CLIENT_REPORTER_H_ */
 

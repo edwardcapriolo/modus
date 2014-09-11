@@ -1,12 +1,12 @@
 #include "guild.h"
-#include "guild_reporter.cpp"
+#include "guild_reporter.h"
 #include <iostream>
-#include <etcdcpp/libetcdcpp.cpp>
+#include <etcdcpp.h>
 #include <vector>
-
+#include <string>
 #include <chrono>
 #include <thread>
-#include "caf/io/hook.hpp"
+
 using namespace std;
 using namespace etcdcpp;
 using namespace modus;
@@ -27,3 +27,4 @@ int main () {
   //await_all_actors_done();
   
 }
+
