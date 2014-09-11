@@ -2,7 +2,7 @@
 #include "guild_reporter.cpp"
 #include "client_reporter.cpp"
 #include <iostream>
-#include <etcdcpp.h>
+#include <etcdcpp/etcdcpp.h>
 #include <vector>
 #include <chrono>
 #include <thread>
