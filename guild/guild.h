@@ -8,7 +8,7 @@
 #ifndef GUILD_H_
 #define GUILD_H_
 
-#include <etcdcpp/libetcdcpp.h>
+#include <etcdcpp/etcdcpp.h>
 
 using namespace std;
 using namespace etcdcpp;

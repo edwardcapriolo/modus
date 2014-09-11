@@ -9,7 +9,6 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <etcdcpp/libetcdcpp.h>
 #include <set>
 
 using namespace std;
